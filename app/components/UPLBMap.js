@@ -37,7 +37,7 @@ export default  class UPLBMap extends React.Component {
   }
 
   //gets the user location
-  _getSyncLocationAsync = async () => {
+  async _getSyncLocationAsync() {
     let {status} = await Permissions.askAsync(Permissions.LOCATION);
     if(status !== "granted")
         console.log('Permission Denied');
@@ -71,28 +71,29 @@ export default  class UPLBMap extends React.Component {
     }
   }
 
-  goHereOption (building) {  
-    if(this.state.region != null) {
-      const startLoc = `${this.state.region.longitude},${this.state.region.latitude}`
-      const destLoc = `${building.coords.longitude},${building.coords.latitude}`
-      this.getDirections(startLoc, destLoc)
+  goHereOption(building) {  
+    if (this.state.region != null) {
+      const startLoc = `${ this.state.region.longitude },${ this.state.region.latitude }`
+      const destLoc = `${ building.coords.longitude },${ building.coords.latitude }`
+      this.getDirections( startLoc, destLoc )
     }
   }
 
-  markedBuilding (building) {
+  markedBuilding(building) {
     Alert.alert(
       building.name,
       "Mark this building as",
       [
         //1 for start, 2 for destination
-        {text: 'Start', onPress: (this.goHereOption(building))},
-        {text: 'Destination', onPress: (this.goHereOption(building))},
+        { text: 'Start', onPress: (this.goHereOption(building)) },
+        { text: 'Destination', onPress: (this.goHereOption(building)) },
         {
           text: 'Go to here', 
           onPress: (this.goHereOption(building)),   
           style: 'cancel'
         },
-        { text: 'Go Back',
+        { 
+          text: 'Go Back',
           onPress: (this.onMarkerPress(building)), 
           style: 'destructive'
         },
@@ -100,7 +101,7 @@ export default  class UPLBMap extends React.Component {
     );
   }
 
-  onMarkerPress (building) {
+  onMarkerPress(building) {
     Alert.alert(
       building.name,
       "What do you want to do?",
@@ -119,7 +120,7 @@ export default  class UPLBMap extends React.Component {
     );
   }
   
-  renderMarkers = () => {
+  renderMarkers() {
     const { buildings } = this.state
     return (
       <View>
