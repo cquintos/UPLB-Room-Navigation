@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Physical Sciences Building",
+        "coords": {
+            "latitude": 14.164391,
+            "longitude": 121.242051
+        },
+        "img_url":"https://geo1.ggpht.com/cbk?panoid=TqwG5AJNntj3crRk9sSe2Q&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=240&yaw=94.2428&pitch=0&thumbfov=100"
+    },
+    {
+        "name": "Humanities Building",
+        "coords": {
+            "latitude": 14.16482056,
+            "longitude": 121.24128968 
+        },
+        "img_url":"https://geo1.ggpht.com/cbk?panoid=hmIUfQYkPEeqyMkBJv73gA&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=240&yaw=231.28441&pitch=0&thumbfov=100"
+    },
+    {
+        "name": "CAS Annex 1",
+        "coords": {
+            "latitude": 14.16556435,
+            "longitude": 121.24118775
+        },
+        "img_url":"https://geo1.ggpht.com/cbk?panoid=nmTwl4dWNnZdVnCofFzHlQ&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=240&yaw=16.589125&pitch=0&thumbfov=100"
+    },
+    {
+        "name": "CAS Annex 2",
+        "coords": {
+            "latitude": 14.16568918,
+            "longitude": 121.24177784
+        },
+        "img_url":"https://geo1.ggpht.com/cbk?panoid=nmTwl4dWNnZdVnCofFzHlQ&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=240&yaw=16.589125&pitch=0&thumbfov=100"
+    },
+    {
+        "name": "Biological Sciences Building",
+        "coords": {
+            "latitude": 14.16605327,
+            "longitude": 121.24013633
+        },
+        "img_url":"https://geo1.ggpht.com/cbk?panoid=5AkYkrWMX4JsGzGaHtC9UA&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=240&yaw=113.11319&pitch=0&thumbfov=100"
+    },
+    {
+        "name": "College of Human Ecology Building",
+        "coords": {
+            "latitude": 14.16503901,
+            "longitude": 121.24219626
+        },
+        "img_url":"https://lh5.googleusercontent.com/p/AF1QipNpndbh3wtZAMOiMO3x6m_lg6cGk1HLQcDRAegR=w408-h306-k-no"
+    }
+]

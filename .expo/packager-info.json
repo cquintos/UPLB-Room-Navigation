@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
   "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 9284,
+  "packagerPort": 19003,
+  "packagerPid": 15028,
   "expoServerNgrokUrl": "https://cu-nqg.jcarloq.uplbroomnav.exp.direct",
   "packagerNgrokUrl": "https://packager.cu-nqg.jcarloq.uplbroomnav.exp.direct",
-  "ngrokPid": 9475,
+  "ngrokPid": 15073,
   "webpackServerPort": null
 }
