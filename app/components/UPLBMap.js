@@ -4,7 +4,8 @@ import {
   View,
   Text,
   StyleSheet,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import {
     Permissions, 
@@ -13,7 +14,7 @@ import {
 import MapView, {
     UrlTile,
     Marker,
-    Callout
+    Callout,
 } from 'react-native-maps';
 import { Ionicons} from '@expo/vector-icons';
 import Polyline from '@mapbox/polyline';
@@ -58,7 +59,7 @@ export default  class UPLBMap extends React.Component {
       longitude: location.coords.longitude,
       //zooming preferences
       latitudeDelta: 0.0092,
-      longitudeDelta: 0.0092,
+      longitudeDelta: 0.0002,
     }
     this.setState({region: currentLocation})
   }
@@ -152,9 +153,10 @@ export default  class UPLBMap extends React.Component {
             } = building;
             return (
               <Marker 
-                key={index}
-                coordinate={{ latitude, longitude }}
-                flat={true}
+                key = { index }
+                coordinate = {{ latitude, longitude }}
+                flat = { true }
+                onPress = {() => this.setState ({ destination : building })}
               >
               <Callout 
                 onPress={this.onMarkerPress (building)}
@@ -194,18 +196,20 @@ export default  class UPLBMap extends React.Component {
   }
 
   render = () => {
+
     const {
       coords,
+      destination,
     } = this.state
 
     return (
       <View style={{flex:1}}>
         <Ionicons
-            name="md-menu"
-            color="#000000"
-            size={32}
-            style={styles.menuIcon}
-            onPress={()=>this.props.navigation.toggleDrawer()}
+            name = "md-menu"
+            color = "#000000"
+            size = { 32 }
+            style = { styles.menuIcon }
+            onPress = { ()=>this.props.navigation.toggleDrawer() }
         />
         <MapView
             initialRegion = { this.state.region }
@@ -217,17 +221,30 @@ export default  class UPLBMap extends React.Component {
             ref ={ (map) => { this.map = map } }
         >
           <UrlTile
-              urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              maximumZ={19}
+              urlTemplate = "http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              maximumZ={50}
               flipY={false}
           />
+
           {this.renderMarkers()}
+          
           <MapView.Polyline
             strokeWidth={2}
             strokeColor="red"
             coordinates={coords}
           />
           
+          <Image
+            source={{ uri: destination && destination.img_url }}
+            style={{
+              flex: 1,
+              width: WIDTH * 0.95,
+              alignSelf: 'center',
+              height: HEIGHT * 0.15,
+              position: 'absolute',
+              bottom: HEIGHT * 0.65,
+            }}
+          />
           <UserLocateBtn locateBtn = {() => { this.locateUser() }}/>
           <FindRouteBtn routeBtn = {() => { this.getDirections() }}/>
           
