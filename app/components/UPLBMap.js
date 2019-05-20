@@ -17,7 +17,10 @@ import MapView, {
 } from 'react-native-maps';
 import { Ionicons} from '@expo/vector-icons';
 import Polyline from '@mapbox/polyline';
-const { width, height } = Dimensions.get('screen')
+import { UserLocateBtn } from './UserLocateBtn';
+
+
+const { WIDTH, HEIGHT } = Dimensions.get('screen')
 const buildings = require('./buildings.json')
 
 
@@ -44,10 +47,11 @@ export default  class UPLBMap extends React.Component {
       
     let location = await Location.getCurrentPositionAsync({enabledHighAccuracy: true})
 
-    //current location
+    //current location 
     let currentLocation = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
+      //zooming preferences
       latitudeDelta: 0.0092,
       longitudeDelta: 0.0092,
     }
@@ -56,6 +60,7 @@ export default  class UPLBMap extends React.Component {
 
   async getDirections(startLoc, destLoc) {
     try {
+      //api for getting coordinates variables must be parsed as lng,lat
       const resp = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf624863d0ee0a042f4aeeaca4dbda263724d9&start=${startLoc}&end=${destLoc}`)
       const respJson = await resp.json();
       const points = respJson.features[0].geometry.coordinates;
@@ -71,7 +76,8 @@ export default  class UPLBMap extends React.Component {
     }
   }
 
-  goHereOption(building) {  
+  //parses both current location's and destination building's lng and lat
+  goHereOption = building => () => {
     if (this.state.region != null) {
       const startLoc = `${ this.state.region.longitude },${ this.state.region.latitude }`
       const destLoc = `${ building.coords.longitude },${ building.coords.latitude }`
@@ -79,7 +85,8 @@ export default  class UPLBMap extends React.Component {
     }
   }
 
-  markedBuilding(building) {
+  //function for marking the building as start or destination
+  markedBuilding = building => () => {
     Alert.alert(
       building.name,
       "Mark this building as",
@@ -101,16 +108,17 @@ export default  class UPLBMap extends React.Component {
     );
   }
 
-  onMarkerPress(building) {
+  //function when the callout is pressed
+  onMarkerPress = building => () => {
     Alert.alert(
       building.name,
       "What do you want to do?",
       [
-        {text: 'Mark as Start/ Destination', onPress: () => {this.markedBuilding(building)}},
+        {text: 'Mark as Start/ Destination', onPress: this.markedBuilding(building)},
         {text: 'Search for rooms', onPress: () => console.log('Searching for rooms!')},
         {
           text: 'Go to here', 
-          onPress: () => {this.goHereOption(building)},
+          onPress: this.goHereOption(building),
           style: 'cancel'
         },
         { text: 'Cancel', 
@@ -120,7 +128,7 @@ export default  class UPLBMap extends React.Component {
     );
   }
   
-  renderMarkers() {
+  renderMarkers = () => {
     const { buildings } = this.state
     return (
       <View>
@@ -133,9 +141,10 @@ export default  class UPLBMap extends React.Component {
               <Marker 
                 key={index}
                 coordinate={{ latitude, longitude }}
+                flat={true}
               >
               <Callout 
-                onPress={()=>{this.onMarkerPress (building)}}
+                onPress={this.onMarkerPress (building)}
               >
                 <Text>
                   {building.name}
@@ -149,7 +158,26 @@ export default  class UPLBMap extends React.Component {
     )
   }
 
-  render() {
+  locateUser() {
+    if(this.state.region !== null) {
+      const { 
+        latitude, 
+        longitude,
+        latitudeDelta,
+        longitudeDelta,
+      } = this.state.region
+      this.map.animateToRegion({
+        latitude,
+        longitude,
+        latitudeDelta,
+        longitudeDelta
+      })
+    } else {
+      Alert.alert("Please wait until we pinpoint your location.");
+    }
+  }
+
+  render = () => {
     const {
       coords,
     } = this.state
@@ -164,12 +192,13 @@ export default  class UPLBMap extends React.Component {
             onPress={()=>this.props.navigation.toggleDrawer()}
         />
         <MapView
-            initialRegion= {this.state.region}
-            provider={null}
-            showsUserLocation={true}
-            showCompasss= {true}    
-            rotateEnabled= {false}
-            style= {{flex: 1}}
+            initialRegion = { this.state.region }
+            provider = { null }
+            showsUserLocation ={ true }
+            showCompasss = { true }    
+            rotateEnabled = { true }
+            style = { { flex: 1} }
+            ref ={ (map) => { this.map = map } }
         >
           <UrlTile
               urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -178,11 +207,13 @@ export default  class UPLBMap extends React.Component {
           />
           {this.renderMarkers()}
           <MapView.Polyline
-            strokeWidth={3}
+            strokeWidth={2}
             strokeColor="red"
             coordinates={coords}
           />
+          <UserLocateBtn locateBtn = {() => { this.locateUser() }}/>
         </MapView>
+        
       </View>
     );
   }
@@ -194,5 +225,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         left: 20,
-    }
+    },
+    locateIcon: {
+      zIndex: 9,
+      position: 'absolute',
+      bottom: 40,
+      right: 20,
+  }
+
+
+    
 })
