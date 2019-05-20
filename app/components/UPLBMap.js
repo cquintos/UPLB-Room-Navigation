@@ -18,9 +18,14 @@ import MapView, {
 import { Ionicons} from '@expo/vector-icons';
 import Polyline from '@mapbox/polyline';
 import { UserLocateBtn } from './UserLocateBtn';
+import { FindRouteBtn } from './FindRouteBtn';
 
 
-const { WIDTH, HEIGHT } = Dimensions.get('screen')
+//Gets window's Width and height for relative layouting
+const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
+
+//Temporary storage of data
 const buildings = require('./buildings.json')
 
 
@@ -58,30 +63,38 @@ export default  class UPLBMap extends React.Component {
     this.setState({region: currentLocation})
   }
 
-  async getDirections(startLoc, destLoc) {
-    try {
-      //api for getting coordinates variables must be parsed as lng,lat
-      const resp = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf624863d0ee0a042f4aeeaca4dbda263724d9&start=${startLoc}&end=${destLoc}`)
-      const respJson = await resp.json();
-      const points = respJson.features[0].geometry.coordinates;
-      const coords = points.map(point => {
-        return {
-          longitude: point[0],
-          latitude: point[1]
-        }
-      })
-      this.setState({ coords })
-    } catch(error) {
-      console.log('Error: ', error)
+  async getDirections() {
+
+    if (this.state.startLoc !== null && this.state.destLoc !== null) {
+      console.log(this.state.startLoc, this.state.destLoc )
+      try {
+        //api for getting coordinates variables must be parsed as lng,lat
+        const resp = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf624863d0ee0a042f4aeeaca4dbda263724d9&start=${this.state.startLoc}&end=${this.state.destLoc}`)
+        const respJson = await resp.json();
+        const points = respJson.features[0].geometry.coordinates;
+        const coords = points.map(point => {
+          return {
+            longitude: point[0],
+            latitude: point[1]
+          }
+        })
+        this.setState({ coords })
+        this.setState({ startLoc : null })
+        this.setState({ destLoc : null })
+      } catch(error) {
+        console.log('Error: ', error)
+      }
+    } else {
+      this.startLoc == null ? Alert.alert("Please enter starting point") : Alert.alert("Please enter destination point");
     }
   }
 
   //parses both current location's and destination building's lng and lat
   goHereOption = building => () => {
     if (this.state.region != null) {
-      const startLoc = `${ this.state.region.longitude },${ this.state.region.latitude }`
-      const destLoc = `${ building.coords.longitude },${ building.coords.latitude }`
-      this.getDirections( startLoc, destLoc )
+      this.setState({ startLoc : `${ this.state.region.longitude },${ this.state.region.latitude }` })
+      this.setState({ destLoc : `${ building.coords.longitude },${ building.coords.latitude }` })
+      this.getDirections()
     }
   }
 
@@ -92,8 +105,8 @@ export default  class UPLBMap extends React.Component {
       "Mark this building as",
       [
         //1 for start, 2 for destination
-        { text: 'Start', onPress: (this.goHereOption(building)) },
-        { text: 'Destination', onPress: (this.goHereOption(building)) },
+        { text: 'Start', onPress: () => (this.setState({ startLoc : `${ building.coords.longitude },${ building.coords.latitude }` })) },
+        { text: 'Destination', onPress: () => (this.setState({ destLoc : `${ building.coords.longitude },${ building.coords.latitude }` })) },
         {
           text: 'Go to here', 
           onPress: (this.goHereOption(building)),   
@@ -158,7 +171,10 @@ export default  class UPLBMap extends React.Component {
     )
   }
 
+  //this function centers the map to the user's location
   locateUser() {
+
+    //takes time to get the necessary coordinates
     if(this.state.region !== null) {
       const { 
         latitude, 
@@ -211,7 +227,10 @@ export default  class UPLBMap extends React.Component {
             strokeColor="red"
             coordinates={coords}
           />
+          
           <UserLocateBtn locateBtn = {() => { this.locateUser() }}/>
+          <FindRouteBtn routeBtn = {() => { this.getDirections() }}/>
+          
         </MapView>
         
       </View>
